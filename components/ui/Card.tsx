@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { ReactNode, forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -38,26 +38,29 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       className
     )
 
-    const hoverVariants = hover ? {
-      initial: { 
-        scale: 1,
-        y: 0,
-        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-      },
-      whileHover: { 
-        scale: 1.02,
-        y: -4,
-        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
-        transition: {
-          duration: 0.3,
-          ease: [0.25, 1, 0.5, 1]
-        }
-      },
-      whileTap: {
-        scale: 0.98,
-        y: 0
-      }
+    const initialState = hover ? { 
+      scale: 1,
+      y: 0,
+      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
     } : {}
+
+    const hoverState = hover ? { 
+      scale: 1.02,
+      y: -4,
+      boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04)'
+    } : {}
+
+    const tapState = hover ? {
+      scale: 0.98,
+      y: 0
+    } : {}
+
+    const hoverTransition = {
+      duration: 0.3,
+      type: "spring" as const,
+      stiffness: 300,
+      damping: 30
+    }
 
     const cardContent = (
       <>
@@ -94,10 +97,10 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
           ref={ref as any}
           href={href}
           className={cardClass}
-          variants={hoverVariants}
-          initial="initial"
-          whileHover="whileHover"
-          whileTap="whileTap"
+          initial={initialState}
+          whileHover={hoverState}
+          whileTap={tapState}
+          transition={hoverTransition}
           {...props}
         >
           {cardContent}
@@ -110,10 +113,10 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         ref={ref}
         className={cardClass}
         onClick={onClick}
-        variants={hoverVariants}
-        initial="initial"
-        whileHover="whileHover"
-        whileTap="whileTap"
+        initial={initialState}
+        whileHover={hoverState}
+        whileTap={tapState}
+        transition={hoverTransition}
         {...props}
       >
         {cardContent}
