@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, Zap, Shield } from 'lucide-react'
+import { ArrowRight, Smartphone, Battery, MapPin } from 'lucide-react'
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui'
 import { 
   fadeInUp, 
@@ -13,19 +13,19 @@ import {
 
 const features = [
   {
-    icon: Zap,
-    title: 'Performance Ultra-rapide',
-    description: 'Des temps de chargement optimisés pour une expérience utilisateur exceptionnelle.'
+    icon: Battery,
+    title: 'Autonomie Longue Durée',
+    description: 'Nos trottinettes électriques offrent jusqu\'à 25km d\'autonomie pour tous vos trajets urbains.'
   },
   {
-    icon: Shield,
-    title: 'Sécurité Avancée',
-    description: 'Protection de niveau entreprise pour vos données les plus sensibles.'
+    icon: MapPin,
+    title: 'Géolocalisation Précise',
+    description: 'Trouvez et déposez facilement votre trottinette grâce à notre système de géolocalisation avancé.'
   },
   {
-    icon: Sparkles,
-    title: 'Design Moderne',
-    description: 'Interface intuitive et élégante qui s\'adapte parfaitement à vos besoins.'
+    icon: Smartphone,
+    title: 'Application Intuitive',
+    description: 'Une app simple et moderne pour déverrouiller, localiser et payer vos trajets en quelques clics.'
   }
 ]
 
@@ -78,8 +78,8 @@ export default function HomePage() {
               variants={staggerItem}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm mb-8"
             >
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">Nouveau : Zypp v2.0 est disponible</span>
+              <Battery className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">Nouveau : Disponible à Montpellier dès janvier 2025</span>
             </motion.div>
 
             {/* Title */}
@@ -87,12 +87,12 @@ export default function HomePage() {
               variants={textReveal}
               className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
             >
-              Transformez votre{' '}
+              La mobilité{' '}
               <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-                entreprise
+                électrique
               </span>
               <br />
-              avec Zypp
+              en liberté
             </motion.h1>
 
             {/* Subtitle */}
@@ -100,8 +100,8 @@ export default function HomePage() {
               variants={staggerItem}
               className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
             >
-              La solution moderne qui combine technologies d'avant-garde et expérience utilisateur 
-              exceptionnelle pour propulser votre business vers le futur.
+              Découvrez Montpellier autrement avec nos trottinettes électriques en libre-service. 
+              Déverrouillez, roulez, déposez. Simple, rapide et écologique.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -110,11 +110,11 @@ export default function HomePage() {
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
             >
               <Button size="lg" className="text-lg px-8 py-4">
-                Commencer gratuitement
+                Télécharger l'app
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-4">
-                Voir la démo
+                Voir comment ça marche
               </Button>
             </motion.div>
 
@@ -124,16 +124,16 @@ export default function HomePage() {
               className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-2xl mx-auto"
             >
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">10k+</div>
-                <div className="text-sm text-muted-foreground">Entreprises</div>
+                <div className="text-3xl font-bold text-primary mb-2">1000</div>
+                <div className="text-sm text-muted-foreground">Trottinettes</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">99.9%</div>
-                <div className="text-sm text-muted-foreground">Disponibilité</div>
+                <div className="text-3xl font-bold text-primary mb-2">1€</div>
+                <div className="text-sm text-muted-foreground">Déverrouillage</div>
               </div>
               <div className="text-center col-span-2 md:col-span-1">
-                <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-                <div className="text-sm text-muted-foreground">Support</div>
+                <div className="text-3xl font-bold text-primary mb-2">15¢/min</div>
+                <div className="text-sm text-muted-foreground">Tarif</div>
               </div>
             </motion.div>
           </motion.div>
@@ -160,8 +160,7 @@ export default function HomePage() {
                 Pourquoi choisir Zypp ?
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Découvrez les fonctionnalités qui font de Zypp la solution idéale 
-                pour votre entreprise moderne.
+                Une nouvelle façon de se déplacer à Montpellier. Écologique, pratique et disponible 24h/24.
               </p>
             </motion.div>
 
@@ -200,6 +199,92 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* App Download Section */}
+      <section className="py-24 bg-accent/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, amount: 0.3 }}
+            className="max-w-6xl mx-auto"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              
+              {/* Left: App Download */}
+              <motion.div variants={staggerItem}>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+                  Votre liberté de mouvement dans votre poche
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8">
+                  L'application Zypp vous permet de localiser, déverrouiller et payer vos trajets en quelques secondes. 
+                  Disponible sur iOS et Android.
+                </p>
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 bg-primary rounded-full"></div>
+                    <span>Géolocalisation en temps réel</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 bg-primary rounded-full"></div>
+                    <span>Paiement sécurisé intégré</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 bg-primary rounded-full"></div>
+                    <span>Historique de vos trajets</span>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg">
+                    <Smartphone className="mr-2 h-5 w-5" />
+                    App Store
+                  </Button>
+                  <Button variant="outline" size="lg">
+                    <Smartphone className="mr-2 h-5 w-5" />
+                    Google Play
+                  </Button>
+                </div>
+              </motion.div>
+
+              {/* Right: Charger Program */}
+              <motion.div variants={staggerItem}>
+                <Card gradient={true} className="p-8 bg-gradient-to-br from-primary/5 to-primary/10">
+                  <CardHeader className="pb-6">
+                    <div className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                      <Battery className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-2xl mb-2">Devenez rechargeur Zypp</CardTitle>
+                    <CardDescription className="text-base">
+                      Gagnez de l'argent en rechargeant nos trottinettes à votre domicile
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4 mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 bg-primary rounded-full"></div>
+                        <span className="text-sm">Horaires flexibles (21h - 6h)</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 bg-primary rounded-full"></div>
+                        <span className="text-sm">Rémunération attractive</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 bg-primary rounded-full"></div>
+                        <span className="text-sm">Tarifs préférentiels sur vos locations</span>
+                      </div>
+                    </div>
+                    <Button className="w-full">
+                      Postuler maintenant
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-24 bg-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -211,19 +296,19 @@ export default function HomePage() {
             className="max-w-3xl mx-auto text-center"
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-              Prêt à transformer votre entreprise ?
+              Prêt à découvrir Montpellier autrement ?
             </h2>
             <p className="text-lg text-muted-foreground mb-10">
-              Rejoignez des milliers d'entreprises qui font déjà confiance à Zypp 
-              pour optimiser leurs performances et accélérer leur croissance.
+              Téléchargez l'application Zypp et profitez dès janvier 2025 de nos trottinettes électriques 
+              en libre-service dans toute la ville.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" className="text-lg px-8 py-4">
-                Essayer gratuitement
+                Télécharger l'app
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-4">
-                Planifier une démo
+                Créer mon compte
               </Button>
             </div>
           </motion.div>

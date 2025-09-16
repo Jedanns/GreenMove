@@ -18,26 +18,26 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Zypp - Solution moderne pour votre entreprise',
+    default: 'Zypp - Trottinettes électriques en libre-service à Montpellier',
     template: '%s | Zypp'
   },
-  description: 'Transformez votre entreprise avec Zypp, la solution moderne qui combine technologies d\'avant-garde et expérience utilisateur exceptionnelle.',
-  keywords: ['entreprise', 'technologie', 'moderne', 'digital', 'innovation'],
+  description: 'Découvrez Montpellier avec les trottinettes électriques Zypp. 1000 trottinettes disponibles 24h/24 dès janvier 2025. 1€ de déverrouillage + 15¢/min.',
+  keywords: ['trottinette électrique', 'Montpellier', 'mobilité', 'transport', 'écologique', 'libre-service'],
   authors: [{ name: 'Zypp Team' }],
   creator: 'Zypp',
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    url: 'https://zypp.com',
-    title: 'Zypp - Solution moderne pour votre entreprise',
-    description: 'Transformez votre entreprise avec Zypp, la solution moderne qui combine technologies d\'avant-garde et expérience utilisateur exceptionnelle.',
+    url: 'https://zypp-montpellier.com',
+    title: 'Zypp - Trottinettes électriques en libre-service à Montpellier',
+    description: 'Découvrez Montpellier avec les trottinettes électriques Zypp. 1000 trottinettes disponibles 24h/24 dès janvier 2025.',
     siteName: 'Zypp',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Zypp - Solution moderne pour votre entreprise',
-    description: 'Transformez votre entreprise avec Zypp, la solution moderne qui combine technologies d\'avant-garde et expérience utilisateur exceptionnelle.',
-    creator: '@zypp'
+    title: 'Zypp - Trottinettes électriques à Montpellier',
+    description: 'Découvrez Montpellier avec les trottinettes électriques Zypp. 1000 trottinettes disponibles 24h/24 dès janvier 2025.',
+    creator: '@zypp_montpellier'
   },
   robots: {
     index: true,

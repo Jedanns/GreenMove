@@ -11,8 +11,9 @@ import { mobileMenu, fadeInUp } from '@/lib/motion-variants'
 // Navigation items
 const navigation = [
   { name: 'Accueil', href: '/' },
-  { name: 'À propos', href: '/about' },
-  { name: 'Services', href: '/services' },
+  { name: 'Comment ça marche', href: '/how-it-works' },
+  { name: 'Tarifs', href: '/pricing' },
+  { name: 'Devenir rechargeur', href: '/become-charger' },
   { name: 'Contact', href: '/contact' }
 ]
 
@@ -117,10 +118,10 @@ export function Header() {
             >
               <Button variant="ghost" size="sm">
                 <User className="h-4 w-4 mr-2" />
-                Connexion
+                Mon compte
               </Button>
               <Button size="sm">
-                Commencer
+                Télécharger l'app
               </Button>
             </motion.div>
 
@@ -200,10 +201,10 @@ export function Header() {
               >
                 <Button variant="outline" className="w-full" size="lg">
                   <User className="h-4 w-4 mr-2" />
-                  Connexion
+                  Mon compte
                 </Button>
                 <Button className="w-full" size="lg">
-                  Commencer
+                  Télécharger l'app
                 </Button>
               </motion.div>
             </motion.div>
