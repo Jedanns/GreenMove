@@ -1,103 +1,234 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { motion } from 'framer-motion'
+import { ArrowRight, Sparkles, Zap, Shield } from 'lucide-react'
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui'
+import { 
+  fadeInUp, 
+  staggerContainer, 
+  staggerItem, 
+  scaleIn, 
+  textReveal 
+} from '@/lib/motion-variants'
+
+const features = [
+  {
+    icon: Zap,
+    title: 'Performance Ultra-rapide',
+    description: 'Des temps de chargement optimisés pour une expérience utilisateur exceptionnelle.'
+  },
+  {
+    icon: Shield,
+    title: 'Sécurité Avancée',
+    description: 'Protection de niveau entreprise pour vos données les plus sensibles.'
+  },
+  {
+    icon: Sparkles,
+    title: 'Design Moderne',
+    description: 'Interface intuitive et élégante qui s\'adapte parfaitement à vos besoins.'
+  }
+]
+
+export default function HomePage() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="relative">
+      
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
+        
+        {/* Background Effects */}
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.6, 0.3]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl"
+            animate={{
+              scale: [1.2, 1, 1.2],
+              opacity: [0.2, 0.5, 0.2]
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1
+            }}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            className="max-w-4xl mx-auto text-center"
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+          >
+            
+            {/* Badge */}
+            <motion.div
+              variants={staggerItem}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm mb-8"
+            >
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">Nouveau : Zypp v2.0 est disponible</span>
+            </motion.div>
+
+            {/* Title */}
+            <motion.h1
+              variants={textReveal}
+              className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+            >
+              Transformez votre{' '}
+              <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+                entreprise
+              </span>
+              <br />
+              avec Zypp
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              variants={staggerItem}
+              className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed"
+            >
+              La solution moderne qui combine technologies d'avant-garde et expérience utilisateur 
+              exceptionnelle pour propulser votre business vers le futur.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              variants={staggerItem}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+            >
+              <Button size="lg" className="text-lg px-8 py-4">
+                Commencer gratuitement
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4">
+                Voir la démo
+              </Button>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div
+              variants={staggerItem}
+              className="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-2xl mx-auto"
+            >
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">10k+</div>
+                <div className="text-sm text-muted-foreground">Entreprises</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">99.9%</div>
+                <div className="text-sm text-muted-foreground">Disponibilité</div>
+              </div>
+              <div className="text-center col-span-2 md:col-span-1">
+                <div className="text-3xl font-bold text-primary mb-2">24/7</div>
+                <div className="text-sm text-muted-foreground">Support</div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-24 bg-accent/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, amount: 0.3 }}
+            className="max-w-6xl mx-auto"
+          >
+            
+            {/* Section Header */}
+            <motion.div
+              variants={staggerItem}
+              className="text-center mb-16"
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Pourquoi choisir Zypp ?
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Découvrez les fonctionnalités qui font de Zypp la solution idéale 
+                pour votre entreprise moderne.
+              </p>
+            </motion.div>
+
+            {/* Features Grid */}
+            <motion.div
+              variants={staggerContainer}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  variants={scaleIn}
+                  custom={index}
+                >
+                  <Card hover={true} gradient={true} className="h-full p-8">
+                    <CardHeader className="pb-4">
+                      <motion.div
+                        className="h-12 w-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <feature.icon className="h-6 w-6 text-primary" />
+                      </motion.div>
+                      <CardTitle className="text-xl">{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription className="text-base leading-relaxed">
+                        {feature.description}
+                      </CardDescription>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-primary/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            variants={fadeInUp}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              Prêt à transformer votre entreprise ?
+            </h2>
+            <p className="text-lg text-muted-foreground mb-10">
+              Rejoignez des milliers d'entreprises qui font déjà confiance à Zypp 
+              pour optimiser leurs performances et accélérer leur croissance.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" className="text-lg px-8 py-4">
+                Essayer gratuitement
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-4">
+                Planifier une démo
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     </div>
-  );
+  )
 }

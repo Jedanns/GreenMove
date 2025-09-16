@@ -1,0 +1,215 @@
+'use client'
+
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Menu, X, User } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui'
+import { mobileMenu, fadeInUp } from '@/lib/motion-variants'
+
+// Navigation items
+const navigation = [
+  { name: 'Accueil', href: '/' },
+  { name: 'À propos', href: '/about' },
+  { name: 'Services', href: '/services' },
+  { name: 'Contact', href: '/contact' }
+]
+
+export function Header() {
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { scrollY } = useScroll()
+
+  // Détection du scroll pour effet glassmorphism
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    setIsScrolled(latest > 50)
+  })
+
+  // Fermer le menu mobile au redimensionnement
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return (
+    <>
+      <motion.header
+        className={cn(
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+          isScrolled 
+            ? 'bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-sm' 
+            : 'bg-transparent'
+        )}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
+      >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            
+            {/* Logo */}
+            <motion.div
+              variants={fadeInUp}
+              initial="initial"
+              animate="animate"
+              transition={{ delay: 0.1 }}
+            >
+              <Link 
+                href="/" 
+                className="flex items-center space-x-3 group"
+              >
+                <motion.div
+                  className="relative h-8 w-8 md:h-10 md:w-10"
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.8, ease: 'easeInOut' }}
+                >
+                  {/* Logo Zypp - Remplacez par votre logo SVG */}
+                  <div className="h-full w-full bg-gradient-to-br from-primary to-primary/60 rounded-xl flex items-center justify-center">
+                    <span className="text-primary-foreground font-bold text-sm md:text-base">Z</span>
+                  </div>
+                </motion.div>
+                <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  Zypp
+                </span>
+              </Link>
+            </motion.div>
+
+            {/* Navigation Desktop */}
+            <nav className="hidden md:flex items-center space-x-1">
+              {navigation.map((item, index) => (
+                <motion.div
+                  key={item.name}
+                  variants={fadeInUp}
+                  initial="initial"
+                  animate="animate"
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                >
+                  <Link
+                    href={item.href}
+                    className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors group"
+                  >
+                    {item.name}
+                    <motion.span
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary origin-left"
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </Link>
+                </motion.div>
+              ))}
+            </nav>
+
+            {/* Actions Desktop */}
+            <motion.div
+              className="hidden md:flex items-center space-x-3"
+              variants={fadeInUp}
+              initial="initial"
+              animate="animate"
+              transition={{ delay: 0.6 }}
+            >
+              <Button variant="ghost" size="sm">
+                <User className="h-4 w-4 mr-2" />
+                Connexion
+              </Button>
+              <Button size="sm">
+                Commencer
+              </Button>
+            </motion.div>
+
+            {/* Menu Mobile Button */}
+            <motion.button
+              className="md:hidden relative z-10 p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              variants={fadeInUp}
+              initial="initial"
+              animate="animate"
+              transition={{ delay: 0.3 }}
+            >
+              <motion.div
+                animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </motion.div>
+            </motion.button>
+          </div>
+        </div>
+      </motion.header>
+
+      {/* Menu Mobile */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 md:hidden"
+            variants={mobileMenu}
+            initial="closed"
+            animate="open"
+            exit="closed"
+          >
+            {/* Overlay */}
+            <motion.div
+              className="absolute inset-0 bg-background/95 backdrop-blur-xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+
+            {/* Menu Content */}
+            <motion.div
+              className="relative flex flex-col h-full pt-20 px-4"
+              variants={mobileMenu}
+            >
+              <nav className="flex-1 space-y-2">
+                {navigation.map((item, index) => (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + index * 0.1 }}
+                  >
+                    <Link
+                      href={item.href}
+                      className="block px-4 py-3 text-lg font-medium text-foreground hover:text-primary transition-colors rounded-xl hover:bg-accent/50"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              {/* Actions Mobile */}
+              <motion.div
+                className="space-y-3 pb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Button variant="outline" className="w-full" size="lg">
+                  <User className="h-4 w-4 mr-2" />
+                  Connexion
+                </Button>
+                <Button className="w-full" size="lg">
+                  Commencer
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
