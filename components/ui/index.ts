@@ -8,3 +8,4 @@ export {
   CardContent, 
   CardFooter 
 } from './Card'
+export { Input, EmailInput, PasswordInput, NameInput } from './Input'

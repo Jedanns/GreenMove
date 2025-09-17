@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { Header, Footer } from '@/components/layout'
+import { AuthProvider } from '@/hooks'
 
 // Configuration des polices
 const inter = Inter({ 
@@ -63,16 +64,18 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
-        {/* Header fixe */}
-        <Header />
-        
-        {/* Contenu principal avec padding-top pour compenser le header fixe */}
-        <main className="pt-16 md:pt-20">
-          {children}
-        </main>
-        
-        {/* Footer */}
-        <Footer />
+        <AuthProvider>
+          {/* Header fixe */}
+          <Header />
+          
+          {/* Contenu principal avec padding-top pour compenser le header fixe */}
+          <main className="pt-16 md:pt-20">
+            {children}
+          </main>
+          
+          {/* Footer */}
+          <Footer />
+        </AuthProvider>
         
         {/* Curseur personnalisé (optionnel) */}
         <div id="cursor" className="hidden lg:block fixed w-4 h-4 pointer-events-none z-[9999] mix-blend-difference">

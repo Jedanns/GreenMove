@@ -3,9 +3,10 @@
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, User } from 'lucide-react'
+import { Menu, X, User, LogOut, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui'
+import { useAuth } from '@/hooks'
 import { mobileMenu, fadeInUp } from '@/lib/motion-variants'
 
 // Navigation items
@@ -20,7 +21,9 @@ const navigation = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const { scrollY } = useScroll()
+  const { user, signOut, loading } = useAuth()
 
   // Détection du scroll pour effet glassmorphism
   useMotionValueEvent(scrollY, 'change', (latest) => {
@@ -32,11 +35,24 @@ export function Header() {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setIsMobileMenuOpen(false)
+        setIsUserMenuOpen(false)
+      }
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (!target.closest('[data-user-menu]')) {
+        setIsUserMenuOpen(false)
       }
     }
 
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    document.addEventListener('click', handleClickOutside)
+    
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      document.removeEventListener('click', handleClickOutside)
+    }
   }, [])
 
   return (
@@ -116,10 +132,66 @@ export function Header() {
               animate="animate"
               transition={{ delay: 0.6 }}
             >
-              <Button variant="ghost" size="sm">
-                <User className="h-4 w-4 mr-2" />
-                Mon compte
-              </Button>
+              {loading ? (
+                <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+              ) : user ? (
+                <>
+                  {/* Menu utilisateur connecté */}
+                  <div className="relative" data-user-menu>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                      className="relative"
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      {user.profile?.full_name || user.email?.split('@')[0] || 'Mon compte'}
+                    </Button>
+
+                    <AnimatePresence>
+                      {isUserMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="absolute right-0 top-full mt-2 w-48 bg-background border border-border rounded-xl shadow-lg overflow-hidden z-50"
+                        >
+                          <div className="py-2">
+                            <Link
+                              href="/account"
+                              className="flex items-center px-4 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              <Settings className="h-4 w-4 mr-3" />
+                              Mon profil
+                            </Link>
+                            <button
+                              onClick={() => {
+                                signOut()
+                                setIsUserMenuOpen(false)
+                              }}
+                              className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                            >
+                              <LogOut className="h-4 w-4 mr-3" />
+                              Se déconnecter
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Bouton pour utilisateur non connecté */}
+                  <Button variant="ghost" size="sm" href="/login">
+                    <User className="h-4 w-4 mr-2" />
+                    Connexion
+                  </Button>
+                </>
+              )}
+              
               <Button size="sm">
                 Télécharger l'app
               </Button>
@@ -199,10 +271,36 @@ export function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <Button variant="outline" className="w-full" size="lg">
-                  <User className="h-4 w-4 mr-2" />
-                  Mon compte
-                </Button>
+                {loading ? (
+                  <div className="w-full h-12 rounded-xl bg-muted animate-pulse" />
+                ) : user ? (
+                  <>
+                    <Button variant="outline" className="w-full" size="lg" href="/account">
+                      <User className="h-4 w-4 mr-2" />
+                      Mon profil
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full text-red-600 hover:text-red-700 hover:bg-red-50" 
+                      size="lg"
+                      onClick={() => {
+                        signOut()
+                        setIsMobileMenuOpen(false)
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Se déconnecter
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" className="w-full" size="lg" href="/login">
+                      <User className="h-4 w-4 mr-2" />
+                      Connexion
+                    </Button>
+                  </>
+                )}
+                
                 <Button className="w-full" size="lg">
                   Télécharger l'app
                 </Button>

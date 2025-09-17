@@ -1,9 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { User, Clock, MapPin, CreditCard, Smartphone, History } from 'lucide-react'
+import { User, Clock, MapPin, CreditCard, Smartphone, History, Edit2 } from 'lucide-react'
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui'
+import { ProtectedRoute } from '@/components/auth'
+import { useAuth } from '@/hooks'
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion-variants'
+import { useState } from 'react'
 
 // Données d'exemple pour l'historique
 const recentRides = [
@@ -43,8 +46,12 @@ const recentRides = [
 ]
 
 export default function AccountPage() {
+  const { user } = useAuth()
+  const [isEditing, setIsEditing] = useState(false)
+
   return (
-    <div className="min-h-screen bg-background">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-background">
       
       {/* Header */}
       <section className="pt-24 pb-12 bg-gradient-to-br from-background via-background to-accent/5">
@@ -89,21 +96,37 @@ export default function AccountPage() {
                   <CardContent className="space-y-4">
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Nom complet</label>
-                      <p className="text-lg font-medium">Alexandre Dubois</p>
+                      <p className="text-lg font-medium">
+                        {user?.profile?.full_name || 'Non renseigné'}
+                      </p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Email</label>
-                      <p className="text-lg">alex.dubois@email.com</p>
+                      <p className="text-lg">{user?.email || 'Non renseigné'}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Téléphone</label>
-                      <p className="text-lg">+33 6 12 34 56 78</p>
+                      <p className="text-lg">
+                        {user?.profile?.phone || 'Non renseigné'}
+                      </p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Membre depuis</label>
-                      <p className="text-lg">Décembre 2024</p>
+                      <p className="text-lg">
+                        {user?.created_at 
+                          ? new Date(user.created_at).toLocaleDateString('fr-FR', { 
+                              month: 'long', 
+                              year: 'numeric' 
+                            })
+                          : 'Non disponible'
+                        }
+                      </p>
                     </div>
-                    <Button className="w-full mt-6">
+                    <Button 
+                      className="w-full mt-6"
+                      onClick={() => setIsEditing(!isEditing)}
+                    >
+                      <Edit2 className="h-4 w-4 mr-2" />
                       Modifier le profil
                     </Button>
                   </CardContent>
@@ -230,5 +253,6 @@ export default function AccountPage() {
         </div>
       </section>
     </div>
+    </ProtectedRoute>
   )
 }
