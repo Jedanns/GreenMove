@@ -5,23 +5,23 @@
   /* Colors */
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(240 10% 3.9%);
-  --color-primary: hsl(142 76% 36%);
+  --color-primary: hsl(142 64% 39%);
   --color-primary-foreground: hsl(0 0% 98%);
   --color-secondary: hsl(240 4.8% 95.9%);
   --color-secondary-foreground: hsl(240 5.9% 10%);
   --color-muted: hsl(240 4.8% 95.9%);
   --color-muted-foreground: hsl(240 3.8% 46.1%);
-  --color-accent: hsl(142 76% 36%);
+  --color-accent: hsl(142 64% 39%);
   --color-accent-foreground: hsl(0 0% 98%);
   --color-border: hsl(240 5.9% 90%);
-  --color-ring: hsl(142 76% 36%);
+  --color-ring: hsl(142 64% 39%);
   
   /* Zypp Green variations */
-  --color-green-50: hsl(142 76% 96%);
-  --color-green-100: hsl(142 76% 90%);
-  --color-green-500: hsl(142 76% 36%);
-  --color-green-600: hsl(142 76% 32%);
-  --color-green-700: hsl(142 76% 28%);
+  --color-green-50: hsl(142 64% 96%);
+  --color-green-100: hsl(142 64% 90%);
+  --color-green-500: hsl(142 64% 39%);
+  --color-green-600: hsl(142 64% 35%);
+  --color-green-700: hsl(142 64% 31%);
   
   /* Animations personnalisées */
   --animate-fade-in: fade-in 0.5s ease-in-out;
@@ -35,23 +35,23 @@
   @theme {
     --color-background: hsl(240 10% 3.9%);
     --color-foreground: hsl(0 0% 98%);
-    --color-primary: hsl(142 76% 45%);
+    --color-primary: hsl(142 64% 45%);
     --color-primary-foreground: hsl(240 5.9% 10%);
     --color-secondary: hsl(240 3.7% 15.9%);
     --color-secondary-foreground: hsl(0 0% 98%);
     --color-muted: hsl(240 3.7% 15.9%);
     --color-muted-foreground: hsl(240 5% 64.9%);
-    --color-accent: hsl(142 76% 45%);
+    --color-accent: hsl(142 64% 45%);
     --color-accent-foreground: hsl(240 5.9% 10%);
     --color-border: hsl(240 3.7% 15.9%);
-    --color-ring: hsl(142 76% 45%);
+    --color-ring: hsl(142 64% 45%);
     
     /* Dark mode Zypp Green variations */
     --color-green-50: hsl(142 50% 15%);
     --color-green-100: hsl(142 60% 20%);
-    --color-green-500: hsl(142 76% 45%);
-    --color-green-600: hsl(142 76% 50%);
-    --color-green-700: hsl(142 76% 55%);
+    --color-green-500: hsl(142 64% 45%);
+    --color-green-600: hsl(142 64% 50%);
+    --color-green-700: hsl(142 64% 55%);
   }
 }
 

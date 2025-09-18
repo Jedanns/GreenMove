@@ -2,36 +2,35 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Github, Twitter, Linkedin, Mail, ArrowRight } from 'lucide-react'
+import { Twitter, Linkedin, Mail, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion-variants'
 
 const footerLinks = {
   company: [
-    { name: 'À propos', href: '/about' },
-    { name: 'Services', href: '/services' },
-    { name: 'Équipe', href: '/team' },
-    { name: 'Carrières', href: '/careers' }
-  ],
-  product: [
-    { name: 'Fonctionnalités', href: '/features' },
+    { name: 'Comment ça marche', href: '/how-it-works' },
     { name: 'Tarifs', href: '/pricing' },
-    { name: 'Documentation', href: '/docs' },
-    { name: 'API', href: '/api' }
+    { name: 'Devenir rechargeur', href: '/become-charger' },
+    { name: 'À propos', href: '/about' }
+  ],
+  service: [
+    { name: 'Zones de service', href: '/zones' },
+    { name: 'Télécharger l\'app', href: '/download' },
+    { name: 'Guide d\'utilisation', href: '/guide' },
+    { name: 'Sécurité', href: '/safety' }
   ],
   support: [
     { name: 'Centre d\'aide', href: '/help' },
     { name: 'Contact', href: '/contact' },
-    { name: 'Statut', href: '/status' },
-    { name: 'Communauté', href: '/community' }
+    { name: 'Signaler un problème', href: '/report' },
+    { name: 'Newsletter', href: '/newsletter' }
   ]
 }
 
 const socialLinks = [
-  { name: 'GitHub', href: '#', icon: Github },
   { name: 'Twitter', href: '#', icon: Twitter },
   { name: 'LinkedIn', href: '#', icon: Linkedin },
-  { name: 'Email', href: 'mailto:contact@zypp.com', icon: Mail }
+  { name: 'Email', href: 'mailto:contact@zypp.fr', icon: Mail }
 ]
 
 export function Footer() {
@@ -105,7 +104,8 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-muted-foreground mb-6 max-w-sm">
-              La solution moderne pour transformer votre entreprise avec des technologies d'avant-garde et une expérience utilisateur exceptionnelle.
+              Révolutionnez vos déplacements à Montpellier avec nos trottinettes électriques. 
+              Une mobilité durable, accessible et disponible 24h/24.
             </p>
             
             {/* Social Links */}
@@ -141,11 +141,11 @@ export function Footer() {
             </ul>
           </motion.div>
 
-          {/* Product Links */}
+          {/* Service Links */}
           <motion.div variants={staggerItem}>
-            <h4 className="font-semibold mb-4">Produit</h4>
+            <h4 className="font-semibold mb-4">Service</h4>
             <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
+              {footerLinks.service.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
@@ -189,6 +189,12 @@ export function Footer() {
           </p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
             <Link
+              href="/legal"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Mentions légales
+            </Link>
+            <Link
               href="/privacy"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -198,13 +204,7 @@ export function Footer() {
               href="/terms"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Conditions
-            </Link>
-            <Link
-              href="/cookies"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Cookies
+              CGU
             </Link>
           </div>
         </motion.div>
