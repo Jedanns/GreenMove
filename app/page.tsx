@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Smartphone, Battery, MapPin } from 'lucide-react'
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui'
+import { NewsletterSection } from '@/components/sections/NewsletterSection'
 import { 
   fadeInUp, 
   staggerContainer, 
@@ -314,6 +315,12 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Newsletter Section */}
+      <NewsletterSection 
+        title="Restez informé du lancement"
+        description="Soyez les premiers informés du lancement de Zypp à Montpellier en janvier 2025. Recevez des offres exclusives et des actualités."
+      />
     </div>
   )
 }

@@ -2,8 +2,9 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Twitter, Linkedin, Mail, ArrowRight } from 'lucide-react'
-import { Button, Logo } from '@/components/ui'
+import { Twitter, Linkedin, Mail } from 'lucide-react'
+import { Logo } from '@/components/ui'
+import { NewsletterForm } from '@/components/auth'
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion-variants'
 
 const footerLinks = {
@@ -61,18 +62,13 @@ export function Footer() {
             </motion.p>
             
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+              className="max-w-md mx-auto"
               variants={staggerItem}
             >
-              <input
-                type="email"
-                placeholder="votre@email.com"
-                className="flex-1 px-4 py-3 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              <NewsletterForm 
+                compact
+                className="w-full"
               />
-              <Button size="lg" className="sm:px-8">
-                S'abonner
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
             </motion.div>
           </div>
         </motion.div>
