@@ -12,6 +12,23 @@ export function useNewsletter() {
     setSuccess(false)
 
     try {
+      // TODO: Temporarily simulate success for frontend demo
+      // Replace this with actual database logic when backend is ready
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Store email locally for now (optional - for demo purposes)
+      const subscribedEmails = JSON.parse(localStorage.getItem('newsletter_emails') || '[]')
+      if (!subscribedEmails.includes(email.toLowerCase())) {
+        subscribedEmails.push(email.toLowerCase())
+        localStorage.setItem('newsletter_emails', JSON.stringify(subscribedEmails))
+      }
+
+      console.log('Newsletter subscription (demo):', email.toLowerCase())
+      
+      // Uncomment below when ready to use real database:
+      /*
       // Check if user already exists
       const { data: existingUser } = await supabase
         .from('users')
@@ -51,10 +68,12 @@ export function useNewsletter() {
           return { error }
         }
       }
+      */
 
       setSuccess(true)
       return { error: null }
     } catch (error) {
+      console.error('Newsletter subscription error:', error)
       return { error }
     } finally {
       setLoading(false)
@@ -65,13 +84,32 @@ export function useNewsletter() {
     setLoading(true)
 
     try {
+      // TODO: Temporarily simulate success for frontend demo
+      // Replace this with actual database logic when backend is ready
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Remove from local storage (demo purposes)
+      const subscribedEmails = JSON.parse(localStorage.getItem('newsletter_emails') || '[]')
+      const updatedEmails = subscribedEmails.filter((e: string) => e !== email.toLowerCase())
+      localStorage.setItem('newsletter_emails', JSON.stringify(updatedEmails))
+
+      console.log('Newsletter unsubscription (demo):', email.toLowerCase())
+      
+      // Uncomment below when ready to use real database:
+      /*
       const { error } = await supabase
         .from('users')
         .update({ newsletter_subscribed: false })
         .eq('email', email.toLowerCase())
 
       return { error }
+      */
+
+      return { error: null }
     } catch (error) {
+      console.error('Newsletter unsubscription error:', error)
       return { error }
     } finally {
       setLoading(false)
