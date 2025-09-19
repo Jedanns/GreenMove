@@ -1,39 +1,38 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Eye, EyeOff, Mail, Lock, ArrowRight, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { LogIn } from 'lucide-react'
+import { Button, Input, Card, CardContent, Logo } from '@/components/ui'
 import { useAuth } from '@/hooks'
-import { Button, EmailInput, PasswordInput, Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
-import { fadeInUp } from '@/lib/motion-variants'
+import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion-variants'
 
-interface LoginFormProps {
-  onSuccess?: () => void
-  redirectTo?: string
+interface LoginFormData {
+  email: string
+  password: string
 }
 
-export function LoginForm({ onSuccess, redirectTo = '/account' }: LoginFormProps) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({})
-  const [loading, setLoading] = useState(false)
-  
-  const { signIn } = useAuth()
+export function LoginForm() {
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: '',
+    password: ''
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState<Partial<LoginFormData>>({})
+  const { signIn, loading } = useAuth()
 
-  const validateForm = () => {
-    const newErrors: typeof errors = {}
+  const validateForm = (): boolean => {
+    const newErrors: Partial<LoginFormData> = {}
 
-    if (!email) {
+    if (!formData.email) {
       newErrors.email = 'L\'email est requis'
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'L\'email n\'est pas valide'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Format d\'email invalide'
     }
 
-    if (!password) {
+    if (!formData.password) {
       newErrors.password = 'Le mot de passe est requis'
-    } else if (password.length < 6) {
-      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
     }
 
     setErrors(newErrors)
@@ -43,118 +42,175 @@ export function LoginForm({ onSuccess, redirectTo = '/account' }: LoginFormProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!validateForm()) return
-
-    setLoading(true)
-    setErrors({})
+    if (!validateForm() || loading) return
 
     try {
-      const { error } = await signIn(email, password)
-
-      if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          setErrors({ general: 'Email ou mot de passe incorrect' })
-        } else {
-          setErrors({ general: error.message })
-        }
-      } else {
-        onSuccess?.()
-        // Redirection gérée par le AuthProvider
-      }
+      await signIn(formData.email, formData.password)
     } catch (error) {
-      setErrors({ general: 'Une erreur inattendue s\'est produite' })
-    } finally {
-      setLoading(false)
+      console.error('Erreur de connexion:', error)
+    }
+  }
+
+  const handleInputChange = (field: keyof LoginFormData) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: e.target.value }))
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }))
     }
   }
 
   return (
     <motion.div
-      variants={fadeInUp}
+      variants={staggerContainer}
       initial="initial"
       animate="animate"
       className="w-full max-w-md mx-auto"
     >
-      <Card className="overflow-hidden">
-        <CardHeader className="text-center pb-4">
+      <Card className="border-0 shadow-xl bg-background/95 backdrop-blur-sm">
+        {/* Header */}
+        <div className="text-center py-8 px-8 pb-4">
           <motion.div
-            className="mx-auto w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4"
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            transition={{ duration: 0.2 }}
+            variants={staggerItem}
+            className="mx-auto mb-6"
           >
-            <LogIn className="w-6 h-6 text-primary" />
+            <Logo size="md" />
           </motion.div>
-          <CardTitle className="text-2xl font-bold">
-            Connexion
-          </CardTitle>
-          <p className="text-muted-foreground mt-2">
-            Connectez-vous à votre compte Zypp
-          </p>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          {errors.general && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm"
-            >
-              {errors.general}
-            </motion.div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <EmailInput
-              label="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={errors.email}
-              disabled={loading}
-              required
-            />
-
-            <PasswordInput
-              label="Mot de passe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
-              disabled={loading}
-              required
-            />
-
-            <div className="flex justify-end">
-              <Link 
-                href="/forgot-password"
-                className="text-sm text-primary hover:text-primary/80 transition-colors"
-              >
-                Mot de passe oublié ?
-              </Link>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              size="lg"
-              loading={loading}
-              disabled={loading}
-            >
-              {loading ? 'Connexion...' : 'Se connecter'}
-            </Button>
-          </form>
-
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Pas encore de compte ?{' '}
-              <Link 
-                href="/register"
-                className="text-primary hover:text-primary/80 font-medium transition-colors"
-              >
-                Créer un compte
-              </Link>
+          
+          <motion.div variants={staggerItem}>
+            <h1 className="text-3xl font-bold mb-2">Connexion</h1>
+            <p className="text-muted-foreground">
+              Connectez-vous à votre compte Zypp
             </p>
-          </div>
+          </motion.div>
+        </div>
+
+        <CardContent className="px-8 pb-8">
+          <motion.form onSubmit={handleSubmit} className="space-y-6" variants={staggerContainer}>
+            
+            {/* Email Field */}
+            <motion.div variants={staggerItem} className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="votre@email.com"
+                  value={formData.email}
+                  onChange={handleInputChange('email')}
+                  className={`pl-10 h-12 ${
+                    errors.email ? 'border-red-500' : ''
+                  }`}
+                  disabled={loading}
+                />
+              </div>
+              <AnimatePresence mode="wait">
+                {errors.email && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex items-center gap-2 text-sm text-red-600"
+                  >
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.email}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Password Field */}
+            <motion.div variants={staggerItem} className="space-y-2">
+              <div className="flex justify-between items-center">
+                <label htmlFor="password" className="text-sm font-medium">
+                  Mot de passe
+                </label>
+                <Link 
+                  href="/auth/forgot-password" 
+                  className="text-sm text-primary hover:text-primary/80 transition-colors"
+                >
+                  Oublié ?
+                </Link>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleInputChange('password')}
+                  className={`pl-10 pr-12 h-12 ${
+                    errors.password ? 'border-red-500' : ''
+                  }`}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  disabled={loading}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <AnimatePresence mode="wait">
+                {errors.password && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex items-center gap-2 text-sm text-red-600"
+                  >
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.password}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Submit Button */}
+            <motion.div variants={staggerItem}>
+              <Button
+                type="submit"
+                className="w-full h-12 text-base font-medium"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Connexion...
+                  </>
+                ) : (
+                  <>
+                    Se connecter
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </motion.div>
+          </motion.form>
         </CardContent>
       </Card>
+
+      {/* Register Link */}
+      <motion.div
+        variants={fadeInUp}
+        className="text-center mt-6"
+      >
+        <p className="text-muted-foreground">
+          Pas encore de compte ?{' '}
+          <Link 
+            href="/register" 
+            className="text-primary hover:text-primary/80 transition-colors font-medium"
+          >
+            Créer un compte
+          </Link>
+        </p>
+      </motion.div>
     </motion.div>
   )
 }

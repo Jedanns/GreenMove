@@ -9,3 +9,4 @@ export {
   CardFooter 
 } from './Card'
 export { Input, EmailInput, PasswordInput, NameInput } from './Input'
+export { Logo } from './Logo'

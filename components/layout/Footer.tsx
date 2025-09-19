@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Twitter, Linkedin, Mail, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui'
+import { Button, Logo } from '@/components/ui'
 import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion-variants'
 
 const footerLinks = {
@@ -93,11 +93,10 @@ export function Footer() {
           >
             <Link href="/" className="flex items-center space-x-3 mb-6 group">
               <motion.div
-                className="h-10 w-10 bg-gradient-to-br from-primary to-primary/60 rounded-xl flex items-center justify-center"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.8, ease: 'easeInOut' }}
               >
-                <span className="text-primary-foreground font-bold">Z</span>
+                <Logo size="sm" className="h-10 w-10" />
               </motion.div>
               <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 Zypp

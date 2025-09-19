@@ -1,258 +1,343 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, Clock, MapPin, CreditCard, Smartphone, History, Edit2 } from 'lucide-react'
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui'
-import { ProtectedRoute } from '@/components/auth'
+import { 
+  User, 
+  LogOut,
+  Edit3,
+  Battery,
+  MapPin,
+  Euro,
+  Loader2
+} from 'lucide-react'
 import { useAuth } from '@/hooks'
-import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion-variants'
-import { useState } from 'react'
-
-// Données d'exemple pour l'historique
-const recentRides = [
-  {
-    id: 1,
-    date: '2024-12-15',
-    time: '14:30',
-    from: 'Place de la Comédie',
-    to: 'Antigone',
-    duration: '12 min',
-    distance: '2.1 km',
-    cost: '2.80€',
-    status: 'completed'
-  },
-  {
-    id: 2,
-    date: '2024-12-14',
-    time: '09:15',
-    from: 'Gare Saint-Roch',
-    to: 'Faculté de Médecine',
-    duration: '18 min',
-    distance: '3.2 km',
-    cost: '3.70€',
-    status: 'completed'
-  },
-  {
-    id: 3,
-    date: '2024-12-13',
-    time: '16:45',
-    from: 'Port Marianne',
-    to: 'Centre Commercial Odysseum',
-    duration: '8 min',
-    distance: '1.4 km',
-    cost: '2.20€',
-    status: 'completed'
-  }
-]
+import { Button, Card, Input } from '@/components/ui'
+import { ProtectedRoute } from '@/components/auth'
+import { supabase } from '@/lib/supabase'
+import { staggerContainer, staggerItem } from '@/lib/motion-variants'
 
 export default function AccountPage() {
-  const { user } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
+  const { user, signOut, updateProfile, loading: authLoading } = useAuth()
+  const [editMode, setEditMode] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [stats, setStats] = useState({
+    totalTrips: 0,
+    totalSpent: 0,
+    totalEarnings: 0
+  })
+  
+  const [profileForm, setProfileForm] = useState({
+    full_name: '',
+    phone: '',
+    address_street: '',
+    address_city: '',
+    address_postal_code: '',
+    newsletter_subscribed: false,
+  })
+
+  useEffect(() => {
+    if (user?.profile) {
+      setProfileForm({
+        full_name: user.profile.full_name || '',
+        phone: user.profile.phone || '',
+        address_street: user.profile.address_street || '',
+        address_city: user.profile.address_city || '',
+        address_postal_code: user.profile.address_postal_code || '',
+        newsletter_subscribed: user.profile.newsletter_subscribed || false,
+      })
+      loadStats()
+    }
+  }, [user])
+
+  const loadStats = async () => {
+    if (!user?.id) return
+
+    try {
+      // Charger les statistiques de base
+      const { data: trips } = await supabase
+        .from('trips')
+        .select('total_cost')
+        .eq('user_id', user.id)
+        .eq('status', 'completed')
+
+      if (trips) {
+        const totalTrips = trips.length
+        const totalSpent = trips.reduce((sum, trip) => sum + (trip.total_cost || 0), 0)
+        setStats(prev => ({ ...prev, totalTrips, totalSpent }))
+      }
+
+      // Si rechargeur, charger les gains
+      if (user.profile?.is_charger_approved) {
+        const { data: sessions } = await supabase
+          .from('charging_sessions')
+          .select('total_earnings')
+          .eq('charger_id', user.id)
+          .eq('status', 'completed')
+
+        if (sessions) {
+          const totalEarnings = sessions.reduce((sum, session) => sum + (session.total_earnings || 0), 0)
+          setStats(prev => ({ ...prev, totalEarnings }))
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des statistiques:', error)
+    }
+  }
+
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    
+    try {
+      const { error } = await updateProfile(profileForm)
+      
+      if (error) {
+        console.error('Erreur lors de la mise à jour:', error)
+      } else {
+        setEditMode(false)
+      }
+    } catch (error) {
+      console.error('Erreur inattendue:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error)
+    }
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount)
+  }
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-background">
-      
-      {/* Header */}
-      <section className="pt-24 pb-12 bg-gradient-to-br from-background via-background to-accent/5">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            variants={fadeInUp}
-            initial="initial"
-            animate="animate"
-            className="max-w-4xl mx-auto text-center"
-          >
-            <h1 className="text-4xl sm:text-5xl font-bold mb-6">
-              Mon compte Zypp
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Gérez votre profil et consultez l'historique de vos trajets
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <section className="py-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Header avec profil */}
           <motion.div
             variants={staggerContainer}
             initial="initial"
             animate="animate"
-            className="max-w-6xl mx-auto"
           >
-            
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
-              {/* Profile Section */}
-              <motion.div variants={staggerItem} className="lg:col-span-1">
-                <Card className="p-6">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-3">
-                      <User className="h-6 w-6 text-primary" />
-                      Profil utilisateur
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Nom complet</label>
-                      <p className="text-lg font-medium">
-                        {user?.profile?.full_name || 'Non renseigné'}
-                      </p>
+            <Card className="p-8 mb-8 border-0 shadow-xl bg-background/95 backdrop-blur-sm">
+              <motion.div variants={staggerItem} className="flex items-center justify-between">
+                <div className="flex items-center space-x-6">
+                  <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center">
+                    <User className="w-10 h-10 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold mb-2">
+                      {user?.profile?.full_name || 'Utilisateur'}
+                    </h1>
+                    <p className="text-muted-foreground text-lg">{user?.email}</p>
+                    {user?.profile?.is_charger_approved && (
+                      <div className="flex items-center mt-2">
+                        <Battery className="w-4 h-4 mr-2 text-primary" />
+                        <span className="text-sm font-medium text-primary">Rechargeur certifié</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="text-red-600 border-red-300 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Déconnexion
+                </Button>
+              </motion.div>
+            </Card>
+
+            {/* Statistiques */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <motion.div variants={staggerItem}>
+                <Card className="p-6 text-center border-0 shadow-lg bg-background/95 backdrop-blur-sm">
+                  <MapPin className="w-8 h-8 text-primary mx-auto mb-4" />
+                  <div className="text-3xl font-bold mb-2">{stats.totalTrips}</div>
+                  <div className="text-muted-foreground">Trajets effectués</div>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={staggerItem}>
+                <Card className="p-6 text-center border-0 shadow-lg bg-background/95 backdrop-blur-sm">
+                  <Euro className="w-8 h-8 text-primary mx-auto mb-4" />
+                  <div className="text-3xl font-bold mb-2">{formatCurrency(stats.totalSpent)}</div>
+                  <div className="text-muted-foreground">Total dépensé</div>
+                </Card>
+              </motion.div>
+
+              {user?.profile?.is_charger_approved && (
+                <motion.div variants={staggerItem}>
+                  <Card className="p-6 text-center border-0 shadow-lg bg-background/95 backdrop-blur-sm">
+                    <Battery className="w-8 h-8 text-primary mx-auto mb-4" />
+                    <div className="text-3xl font-bold text-green-600 mb-2">{formatCurrency(stats.totalEarnings)}</div>
+                    <div className="text-muted-foreground">Gains totaux</div>
+                  </Card>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Informations personnelles */}
+            <motion.div variants={staggerItem}>
+              <Card className="p-8 border-0 shadow-xl bg-background/95 backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-2xl font-bold">Informations personnelles</h2>
+                  <Button
+                    onClick={() => setEditMode(!editMode)}
+                    variant="outline"
+                    disabled={loading}
+                  >
+                    <Edit3 className="w-4 h-4 mr-2" />
+                    {editMode ? 'Annuler' : 'Modifier'}
+                  </Button>
+                </div>
+
+                {editMode ? (
+                  <form onSubmit={handleProfileUpdate} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Nom complet
+                        </label>
+                        <Input
+                          value={profileForm.full_name}
+                          onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })}
+                          required
+                          disabled={loading}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Téléphone
+                        </label>
+                        <Input
+                          value={profileForm.phone}
+                          onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                          placeholder="06 12 34 56 78"
+                          disabled={loading}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Adresse
+                        </label>
+                        <Input
+                          value={profileForm.address_street}
+                          onChange={(e) => setProfileForm({ ...profileForm, address_street: e.target.value })}
+                          placeholder="123 Rue de la République"
+                          disabled={loading}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Ville
+                        </label>
+                        <Input
+                          value={profileForm.address_city}
+                          onChange={(e) => setProfileForm({ ...profileForm, address_city: e.target.value })}
+                          placeholder="Montpellier"
+                          disabled={loading}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Code postal
+                        </label>
+                        <Input
+                          value={profileForm.address_postal_code}
+                          onChange={(e) => setProfileForm({ ...profileForm, address_postal_code: e.target.value })}
+                          placeholder="34000"
+                          disabled={loading}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Email</label>
-                      <p className="text-lg">{user?.email || 'Non renseigné'}</p>
+                    
+                    <div className="flex items-center">
+                      <input
+                        id="newsletter"
+                        type="checkbox"
+                        checked={profileForm.newsletter_subscribed}
+                        onChange={(e) => setProfileForm({ ...profileForm, newsletter_subscribed: e.target.checked })}
+                        className="h-4 w-4 text-primary focus:ring-primary border-border rounded"
+                        disabled={loading}
+                      />
+                      <label htmlFor="newsletter" className="ml-3 text-sm">
+                        Recevoir la newsletter
+                      </label>
                     </div>
+                    
+                    <div className="flex space-x-4">
+                      <Button type="submit" disabled={loading}>
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Sauvegarde...
+                          </>
+                        ) : (
+                          'Sauvegarder'
+                        )}
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setEditMode(false)}
+                        disabled={loading}
+                      >
+                        Annuler
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Téléphone</label>
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">Email</label>
+                      <p className="text-lg">{user?.email}</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">Téléphone</label>
+                      <p className="text-lg">{user?.profile?.phone || 'Non renseigné'}</p>
+                    </div>
+                    
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">Adresse</label>
                       <p className="text-lg">
-                        {user?.profile?.phone || 'Non renseigné'}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Membre depuis</label>
-                      <p className="text-lg">
-                        {user?.created_at 
-                          ? new Date(user.created_at).toLocaleDateString('fr-FR', { 
-                              month: 'long', 
-                              year: 'numeric' 
-                            })
-                          : 'Non disponible'
+                        {user?.profile?.address_street ? 
+                          `${user.profile.address_street}, ${user.profile.address_city} ${user.profile.address_postal_code}` :
+                          'Non renseignée'
                         }
                       </p>
                     </div>
-                    <Button 
-                      className="w-full mt-6"
-                      onClick={() => setIsEditing(!isEditing)}
-                    >
-                      <Edit2 className="h-4 w-4 mr-2" />
-                      Modifier le profil
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Stats Card */}
-                <Card className="p-6 mt-6">
-                  <CardHeader className="pb-4">
-                    <CardTitle>Mes statistiques</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">28</div>
-                        <div className="text-sm text-muted-foreground">Trajets</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">45km</div>
-                        <div className="text-sm text-muted-foreground">Distance</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">67€</div>
-                        <div className="text-sm text-muted-foreground">Dépensé</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">15kg</div>
-                        <div className="text-sm text-muted-foreground">CO2 évité</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* Main Content */}
-              <motion.div variants={staggerItem} className="lg:col-span-2">
-                
-                {/* Quick Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                  <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <Smartphone className="h-8 w-8 text-primary" />
-                      <div>
-                        <h3 className="font-semibold">Scanner QR Code</h3>
-                        <p className="text-sm text-muted-foreground">Déverrouillez une trottinette</p>
-                      </div>
-                    </div>
-                  </Card>
-                  
-                  <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <MapPin className="h-8 w-8 text-primary" />
-                      <div>
-                        <h3 className="font-semibold">Trouver une trottinette</h3>
-                        <p className="text-sm text-muted-foreground">Voir la carte</p>
-                      </div>
-                    </div>
-                  </Card>
-                  
-                  <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <CreditCard className="h-8 w-8 text-primary" />
-                      <div>
-                        <h3 className="font-semibold">Moyens de paiement</h3>
-                        <p className="text-sm text-muted-foreground">Gérer mes cartes</p>
-                      </div>
-                    </div>
-                  </Card>
-                </div>
-
-                {/* Ride History */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
-                      <History className="h-6 w-6 text-primary" />
-                      Historique des trajets
-                    </CardTitle>
-                    <CardDescription>
-                      Consultez vos derniers trajets en trottinette électrique
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {recentRides.map((ride, index) => (
-                        <motion.div
-                          key={ride.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 * index }}
-                          className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors"
-                        >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium">{ride.from}</span>
-                              <span className="text-muted-foreground">→</span>
-                              <span className="font-medium">{ride.to}</span>
-                            </div>
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-4 w-4" />
-                                {ride.date} • {ride.time}
-                              </span>
-                              <span>{ride.duration}</span>
-                              <span>{ride.distance}</span>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-semibold text-primary">{ride.cost}</div>
-                            <div className="text-sm text-green-600 capitalize">{ride.status}</div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
                     
-                    <div className="mt-6 text-center">
-                      <Button variant="outline">
-                        Voir tous les trajets
-                      </Button>
+                    <div>
+                      <label className="block text-sm font-medium text-muted-foreground mb-1">Type de compte</label>
+                      <p className="text-lg">
+                        {user?.profile?.is_charger_approved ? 'Rechargeur certifié' : 'Utilisateur standard'}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
+                  </div>
+                )}
+              </Card>
+            </motion.div>
           </motion.div>
         </div>
-      </section>
-    </div>
+      </div>
     </ProtectedRoute>
   )
 }

@@ -12,19 +12,44 @@ export function useNewsletter() {
     setSuccess(false)
 
     try {
-      const { error } = await supabase
-        .from('newsletter_subscriptions')
-        .insert({
-          email: email.toLowerCase(),
-        })
+      // Check if user already exists
+      const { data: existingUser } = await supabase
+        .from('users')
+        .select('id, newsletter_subscribed')
+        .eq('email', email.toLowerCase())
+        .single()
 
-      if (error) {
-        // Si l'email existe déjà, on considère ça comme un succès
-        if (error.code === '23505') {
-          setSuccess(true)
-          return { error: null }
+      if (existingUser) {
+        // User exists, update their newsletter subscription
+        const { error } = await supabase
+          .from('users')
+          .update({ newsletter_subscribed: true })
+          .eq('email', email.toLowerCase())
+
+        if (error) {
+          return { error }
         }
-        return { error }
+      } else {
+        // User doesn't exist, create a minimal user record for newsletter
+        const { error } = await supabase
+          .from('users')
+          .insert({
+            id: crypto.randomUUID(),
+            email: email.toLowerCase(),
+            full_name: '', // Will be filled when they register
+            newsletter_subscribed: true,
+            user_type: 'regular',
+            address_country: 'FR', // Default country
+          })
+
+        if (error) {
+          // Si l'email existe déjà, on considère ça comme un succès
+          if (error.code === '23505') {
+            setSuccess(true)
+            return { error: null }
+          }
+          return { error }
+        }
       }
 
       setSuccess(true)
@@ -41,8 +66,8 @@ export function useNewsletter() {
 
     try {
       const { error } = await supabase
-        .from('newsletter_subscriptions')
-        .update({ is_active: false })
+        .from('users')
+        .update({ newsletter_subscribed: false })
         .eq('email', email.toLowerCase())
 
       return { error }

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Menu, X, User, LogOut, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui'
+import { Button, Logo } from '@/components/ui'
 import { useAuth } from '@/hooks'
 import { mobileMenu, fadeInUp } from '@/lib/motion-variants'
 
@@ -83,14 +83,11 @@ export function Header() {
                 className="flex items-center space-x-3 group"
               >
                 <motion.div
-                  className="relative h-8 w-8 md:h-10 md:w-10"
+                  className="relative"
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.8, ease: 'easeInOut' }}
                 >
-                  {/* Logo Zypp - Remplacez par votre logo SVG */}
-                  <div className="h-full w-full bg-gradient-to-br from-primary to-primary/60 rounded-xl flex items-center justify-center">
-                    <span className="text-primary-foreground font-bold text-sm md:text-base">Z</span>
-                  </div>
+                  <Logo size="sm" className="h-8 w-8 md:h-10 md:w-10" />
                 </motion.div>
                 <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                   Zypp
